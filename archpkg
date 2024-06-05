@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+import subprocess as sb
+import os
+from colorama import Fore, Style, init
+import sys
+
+# Initialize colorama
+init()
+pm_add_options = ["--pacmaninstall", "--aurinstall", "--flatpakinstall"]
+
+def dot_desktop_gen(name, exec, icon):
+    return """
+[Desktop Entry]
+Name={}
+Exec={}
+Icon={}
+Type=Application
+""".format(name, exec, icon)
+
+def print_help():
+    print(Fore.RED + """Usage: archpkg <command> [options]
+              {}install <package>{} - installs package
+                  install options:
+                    {}--appimage{} - installs appimage
+                    {}--aur{} - installs aur package
+                    {}--pacman{} - installs pacman package
+                    {}--flatpak{} - installs flatpak package
+              {} pm add options:{}
+                    {}--pacmaninstall{} - installs pacman
+                    {}--aurinstall{} - installs aur
+                    {}--flatpakinstall{} - installs flatpak
+              {}remove <package>{} - removes package
+                  remove options:
+                    {}--pacrm{} - removes pacman package
+                    {}--aurrm{} - removes aur package
+                    {}--flatpakrm{} - removes flatpak package
+            default: aur install
+              """.format(Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL))
+    sys.exit(1)
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print_help()
+    if sys.argv[1] not in ["install", "remove"] or len(sys.argv) < 3:
+        print_help()
+    if sys.argv[2] in pm_add_options:
+        if sys.argv[2] == "--pacmaninstall":
+            sb.run(["sudo","pacman", "-Syu", "--noconfirm"])
+            sys.exit(0)
+        elif sys.argv[2] == "--aurinstall":
+            print("Installing yay...")
+            if sb.call("yay --version", shell=True) != 0:
+                sb.call(['git', 'clone', 'https://aur.archlinux.org/yay.git'])
+                sb.call(['makepkg', '-si'], cwd='yay')
+                sb.call(["rm", "-rf", "yay"])
+                print("Yay installed.")
+            else:
+                sb.call(["yay", "-Syu", "--noconfirm"])
+                print("Yay already installed.")
+            sys.exit(0)
+        elif sys.argv[2] == "--flatpakinstall":
+            print("Installing flatpak...")
+            if sb.call("yay --version", shell=True) != 0:
+                print("YAY not installed. Please install yay first.")
+                sys.exit(1)
+            if sb.call("flatpak --version", shell=True) != 0:
+                sb.call(["yay", "-S", "flatpak", "discover","--noconfirm"])
+                print("Flatpak installed.")
+            else:
+                print("Flatpak already installed.")
+            sys.exit(0)
+    if sys.argv[1] == "install":
+            if sys.argv[2] == "--appimage":
+                cwd = os.getcwd()
+                sb.call(["chmod", "+x", sys.argv[3]])
+                sb.call([f"{cwd}/{sys.argv[3]}", "--appimage-extract"])
+                sb.call(["chmod", "+x", "squashfs-root/AppRun"])
+                name = False
+                for i in os.listdir("squashfs-root"):
+                    if i.endswith(".desktop"):
+                        ds_name = i
+                        dsktp = open('squashfs-root/{}'.format(i), 'r').read()
+                        for j in dsktp.split('\n'):
+                            if j.startswith('Name='):
+                                name = j.split('=')[1]
+                if not name:
+                    print("Could not find name in .desktop file")
+                    sb.run("ls", shell=True)
+                    pkg_name = input("Enter the package name manualy: ")
+                    sb.call(["mv", "squashfs-root", pkg_name])
+                    dot_ds = dot_desktop_gen(pkg_name, f"~/Programs/{pkg_name}/AppRun", f"~/Programs/{pkg_name}/{pkg_name}.png")
+                else:
+                    print(f"Found name in .desktop file: {name}")
+                    ud_parse = cwd.split("/")
+                    dot_ds = dot_desktop_gen(name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{ds_name[:-8]}.png")
+                    sb.call(["mv", "squashfs-root", name])
+                    open(f"{name}/{ds_name}", 'w').write(dot_ds)
+                    sb.call(["mv", f"{name}/{ds_name}", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{ds_name}"])
+                    sb.call(["mv", name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}"])
+                    sb.call(["chmod", "+x", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun"])
+                    sys.exit(0)
+            elif sys.argv[2] == "--aur":
+                sb.call(["yay", "-S", sys.argv[3], "--noconfirm"])
+            elif sys.argv[2] == "--pacman":
+                sb.call(["sudo","pacman", "-S", sys.argv[3], "--noconfirm"])
+            elif sys.argv[2] == "--flatpak":
+                sb.call(["flatpak", "install", sys.argv[3]])
+    elif sys.argv[1] == "remove":
+        if sys.argv[2] == "--pacrm":
+            sb.call(["pacman", "-Rsn", sys.argv[3]])
+        elif sys.argv[2] == "--aurrm":
+            sb.call(["yay", "-Rsn", sys.argv[3]])
+        elif sys.argv[2] == "--flatpakrm":
+            sb.call(["flatpak", "remove", sys.argv[3]])
+        elif sys.argv[2] == "--apprm":
+            sb.call(["rm", "-rf", sys.argv[3]])
+        sys.exit(0)
+    else:
+        print_help()
+

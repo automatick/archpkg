@@ -1,0 +1,9 @@
+#!/bin/bash
+echo "Installing packages..."
+sudo pacman -S python-pip git --noconfirm --needed
+echo "Done!"
+echo "Making install..."
+mkdir ~/Programs
+sudo cp ./archpkg /bin
+pip install colorama --break-system-packages
+echo "Done!"
