@@ -11,8 +11,10 @@ It's installs all deperencies and move archpkg to /bin.
 Than you check of instalation success
 
 ```bash
--> archpkg
+-> archpkg help
 Usage: archpkg <command> [options]
+              update [aur|pacman|flatpak] - updates the archpkg
+              applist - lists installed appimages
               install <package> - installs package
                   install options:
                     --appimage - installs appimage
@@ -31,25 +33,47 @@ Usage: archpkg <command> [options]
             default: aur install
 ```
 If instalation was success you can use command to install/remove packages.
-Samples:
+First launch:
+  Make the install of aur and flatpak
+  aur
+  ```bash
+    archpkg --aurinstall
+  ```
+  flatpak
+  ```bash
+   archpkg --flatpakinstall
+  ```
 
-Install AppImage package:
-```bash
-archpkg install --appimage Test.AppImage
-```
-Install aur package:
-```bash
-archpkg install --aur vim
-```
-or
-```bash
-archpkg install vim
-```
-Remove appimage package:
-```bash
-archpkg remove --apprm Test
-```
-Remove aur package:
-```bash
-archpkg remove --aurrm vim
-```
+Samples:
+  Install AppImage package:
+  ```bash
+  archpkg install --appimage Test.AppImage
+  ```
+  Install aur package:
+  ```bash
+  archpkg install --aur vim
+  ```
+  or
+  ```bash
+  archpkg install vim
+  ```
+  Remove appimage package:
+  ```bash
+  archpkg remove --apprm Test
+  ```
+  Remove aur package:
+  ```bash
+  archpkg remove --aurrm vim
+  ```
+  List of intalled AppImages:
+  ```bash
+  archpkg applist
+  ```
+  Update the manager:
+  ```bash
+  archpkg update
+  ```
+  Update the another packages:
+  ```bash
+  archpkg uppdate aur | pacman | flatpack
+  ```
