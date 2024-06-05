@@ -20,7 +20,8 @@ Type=Application
 
 def print_help():
     print(Fore.RED + """Usage: archpkg <command> [options]
-              {}update{} - updates the archpkg
+              {}update{} [{}aur{}|{}pacman{}|{}flatpak{}] - updates the archpkg
+              {}applist{} - lists installed appimages
               {}install <package>{} - installs package
                   install options:
                     {}--appimage{} - installs appimage
@@ -37,7 +38,7 @@ def print_help():
                     {}--aurrm{} - removes aur package
                     {}--flatpakrm{} - removes flatpak package
             default: aur install
-              """.format(Fore.YELLOW, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL))
+              """.format(Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL,Fore.YELLOW, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL))
     sys.exit(1)
 
 if __name__ == "__main__":
@@ -60,6 +61,10 @@ if __name__ == "__main__":
                 sb.call(["sudo","pacman", "-Syu", "--noconfirm"])
             elif sys.argv[2] == "flatpak":
                 sb.call(["flatpak", "update"])
+            sys.exit(0)
+    elif sys.argv[1] == "help":    
+            print_help()
+            sys.exit(0)    
     elif sys.argv[1] == "applist":
         sb.run("ls ~/Programs", shell=True)
         sys.exit(0)
