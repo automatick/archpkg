@@ -7,6 +7,7 @@ import sys
 # Initialize colorama
 init()
 pm_add_options = ["--pacmaninstall", "--aurinstall", "--flatpakinstall"]
+commands = ["install", "remove", "update", "applist", "help"]
 
 def dot_desktop_gen(name, exec, icon):
     return """
@@ -42,7 +43,7 @@ def print_help():
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print_help()
-    if sys.argv[1] not in ["install", "remove"] or len(sys.argv) < 3:
+    if sys.argv[1] not in commands or len(sys.argv) < 3:
         print_help()
     cwd = os.getcwd()
     ud_parse = cwd.split("/")
