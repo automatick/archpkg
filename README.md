@@ -41,6 +41,10 @@ Install aur package:
 ```bash
 archpkg install --aur vim
 ```
+or
+```bash
+archpkg install vim
+```
 Remove appimage package:
 ```bash
 archpkg remove --apprm Test
