@@ -19,6 +19,7 @@ Type=Application
 
 def print_help():
     print(Fore.RED + """Usage: archpkg <command> [options]
+              {}update{} - updates the archpkg
               {}install <package>{} - installs package
                   install options:
                     {}--appimage{} - installs appimage
@@ -35,7 +36,7 @@ def print_help():
                     {}--aurrm{} - removes aur package
                     {}--flatpakrm{} - removes flatpak package
             default: aur install
-              """.format(Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL))
+              """.format(Fore.YELLOW, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL))
     sys.exit(1)
 
 if __name__ == "__main__":
@@ -43,6 +44,8 @@ if __name__ == "__main__":
         print_help()
     if sys.argv[1] not in ["install", "remove"] or len(sys.argv) < 3:
         print_help()
+    cwd = os.getcwd()
+    ud_parse = cwd.split("/")
     if sys.argv[2] in pm_add_options:
         if sys.argv[2] == "--pacmaninstall":
             sb.run(["sudo","pacman", "-Syu", "--noconfirm"])
@@ -69,9 +72,12 @@ if __name__ == "__main__":
             else:
                 print("Flatpak already installed.")
             sys.exit(0)
-    if sys.argv[1] == "install":
+    if sys.argv[1] == "update":
+        sb.call(["git", "clone", "https://github.com/automatick/archpkg.git"])
+        sb.call(["sh", "./archpkg/archpkginstall"])
+        sb.call(["rm", "-rf", "archpkg"])
+    elif sys.argv[1] == "install":
             if sys.argv[2] == "--appimage":
-                cwd = os.getcwd()
                 sb.call(["chmod", "+x", sys.argv[3]])
                 sb.call([f"{cwd}/{sys.argv[3]}", "--appimage-extract"])
                 sb.call(["chmod", "+x", "squashfs-root/AppRun"])
@@ -91,7 +97,6 @@ if __name__ == "__main__":
                     dot_ds = dot_desktop_gen(pkg_name, f"~/Programs/{pkg_name}/AppRun", f"~/Programs/{pkg_name}/{pkg_name}.png")
                 else:
                     print(f"Found name in .desktop file: {name}")
-                    ud_parse = cwd.split("/")
                     dot_ds = dot_desktop_gen(name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{ds_name[:-8]}.png")
                     sb.call(["mv", "squashfs-root", name])
                     open(f"{name}/{ds_name}", 'w').write(dot_ds)
@@ -105,6 +110,8 @@ if __name__ == "__main__":
                 sb.call(["sudo","pacman", "-S", sys.argv[3], "--noconfirm"])
             elif sys.argv[2] == "--flatpak":
                 sb.call(["flatpak", "install", sys.argv[3]])
+            else:
+                sb.call(["yay", "-S", sys.argv[2], "--noconfirm"])
     elif sys.argv[1] == "remove":
         if sys.argv[2] == "--pacrm":
             sb.call(["pacman", "-Rsn", sys.argv[3]])
@@ -113,7 +120,8 @@ if __name__ == "__main__":
         elif sys.argv[2] == "--flatpakrm":
             sb.call(["flatpak", "remove", sys.argv[3]])
         elif sys.argv[2] == "--apprm":
-            sb.call(["rm", "-rf", sys.argv[3]])
+            sb.call(["rm", "-rf", f"{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}"])
+            sb.call(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{sys.argv[3].lower()}.desktop"])
         sys.exit(0)
     else:
         print_help()
