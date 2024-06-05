@@ -52,6 +52,8 @@ if __name__ == "__main__":
         sb.call(["sh", "./archpkg/archpkginstall"])
         sb.call(["rm", "-rf", "archpkg"])
         sys.exit(0)
+    elif sys.argv[1] == "applist":
+        sb.run("ls ~/Programs", shell=True)
     elif sys.argv[1] == "install":
             if sys.argv[2] == "--appimage":
                 sb.call(["chmod", "+x", sys.argv[3]])
