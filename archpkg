@@ -43,40 +43,15 @@ def print_help():
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print_help()
-    if sys.argv[1] not in commands or len(sys.argv) < 3:
+    if sys.argv[1] not in commands or len(sys.argv) < 2:
         print_help()
     cwd = os.getcwd()
     ud_parse = cwd.split("/")
-    if sys.argv[2] in pm_add_options:
-        if sys.argv[2] == "--pacmaninstall":
-            sb.run(["sudo","pacman", "-Syu", "--noconfirm"])
-            sys.exit(0)
-        elif sys.argv[2] == "--aurinstall":
-            print("Installing yay...")
-            if sb.call("yay --version", shell=True) != 0:
-                sb.call(['git', 'clone', 'https://aur.archlinux.org/yay.git'])
-                sb.call(['makepkg', '-si'], cwd='yay')
-                sb.call(["rm", "-rf", "yay"])
-                print("Yay installed.")
-            else:
-                sb.call(["yay", "-Syu", "--noconfirm"])
-                print("Yay already installed.")
-            sys.exit(0)
-        elif sys.argv[2] == "--flatpakinstall":
-            print("Installing flatpak...")
-            if sb.call("yay --version", shell=True) != 0:
-                print("YAY not installed. Please install yay first.")
-                sys.exit(1)
-            if sb.call("flatpak --version", shell=True) != 0:
-                sb.call(["yay", "-S", "flatpak", "discover","--noconfirm"])
-                print("Flatpak installed.")
-            else:
-                print("Flatpak already installed.")
-            sys.exit(0)
     if sys.argv[1] == "update":
         sb.call(["git", "clone", "https://github.com/automatick/archpkg.git"])
         sb.call(["sh", "./archpkg/archpkginstall"])
         sb.call(["rm", "-rf", "archpkg"])
+        sys.exit(0)
     elif sys.argv[1] == "install":
             if sys.argv[2] == "--appimage":
                 sb.call(["chmod", "+x", sys.argv[3]])
@@ -124,6 +99,31 @@ if __name__ == "__main__":
             sb.call(["rm", "-rf", f"{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}"])
             sb.call(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{sys.argv[3].lower()}.desktop"])
         sys.exit(0)
-    else:
-        print_help()
+    if sys.argv[2] in pm_add_options:
+        if sys.argv[2] == "--pacmaninstall":
+            sb.run(["sudo","pacman", "-Syu", "--noconfirm"])
+            sys.exit(0)
+        elif sys.argv[2] == "--aurinstall":
+            print("Installing yay...")
+            if sb.call("yay --version", shell=True) != 0:
+                sb.call(['git', 'clone', 'https://aur.archlinux.org/yay.git'])
+                sb.call(['makepkg', '-si'], cwd='yay')
+                sb.call(["rm", "-rf", "yay"])
+                print("Yay installed.")
+            else:
+                sb.call(["yay", "-Syu", "--noconfirm"])
+                print("Yay already installed.")
+            sys.exit(0)
+        elif sys.argv[2] == "--flatpakinstall":
+            print("Installing flatpak...")
+            if sb.call("yay --version", shell=True) != 0:
+                print("YAY not installed. Please install yay first.")
+                sys.exit(1)
+            if sb.call("flatpak --version", shell=True) != 0:
+                sb.call(["yay", "-S", "flatpak", "discover","--noconfirm"])
+                print("Flatpak installed.")
+            else:
+                print("Flatpak already installed.")
+            sys.exit(0)
+    print_help()
 
