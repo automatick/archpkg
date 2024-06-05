@@ -13,8 +13,8 @@ def dot_desktop_gen(name, exec, icon):
     return """
 [Desktop Entry]
 Name={}
-Exec={}
-Icon={}
+Exec='{}'
+Icon='{}'
 Type=Application
 """.format(name, exec, icon)
 
@@ -81,6 +81,8 @@ if __name__ == "__main__":
                         for j in dsktp.split('\n'):
                             if j.startswith('Name='):
                                 name = j.split('=')[1]
+                    elif i.endswith(".png"):
+                        icon_name = i
                 if not name:
                     print("Could not find name in .desktop file")
                     sb.run("ls", shell=True)
@@ -89,10 +91,10 @@ if __name__ == "__main__":
                     dot_ds = dot_desktop_gen(pkg_name, f"~/Programs/{pkg_name}/AppRun", f"~/Programs/{pkg_name}/{pkg_name}.png")
                 else:
                     print(f"Found name in .desktop file: {name}")
-                    dot_ds = dot_desktop_gen(name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name.replace(' ', '_')}/AppRun", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{ds_name[:-8]}.png")
+                    dot_ds = dot_desktop_gen(name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{icon_name}")
                     sb.call(["mv", "squashfs-root", name])
-                    open(f"{name.replace(' ', '_')}/{ds_name}", 'w').write(dot_ds)
-                    sb.call(["mv", f"{name.replace(' ', '_')}/{ds_name}", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{ds_name}"])
+                    open(f"{name}/{ds_name}", 'w').write(dot_ds)
+                    sb.call(["mv", f"{name}/{ds_name}", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{ds_name}"])
                     sb.call(["mv", name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}"])
                     sb.call(["chmod", "+x", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun"])
                     sys.exit(0)
