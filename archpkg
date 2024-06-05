@@ -7,7 +7,7 @@ import sys
 # Initialize colorama
 init()
 pm_add_options = ["--pacmaninstall", "--aurinstall", "--flatpakinstall"]
-commands = ["install", "remove", "update", "applist", "help"]
+commands = ["install", "remove", "update", "applist", "help"] + pm_add_options
 
 def dot_desktop_gen(name, exec, icon):
     return """
@@ -115,11 +115,11 @@ if __name__ == "__main__":
             sb.call(["rm", "-rf", f"{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}"])
             sb.call(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{sys.argv[3].lower()}.desktop"])
         sys.exit(0)
-    if sys.argv[2] in pm_add_options:
-        if sys.argv[2] == "--pacmaninstall":
+    if sys.argv[1] in pm_add_options:
+        if sys.argv[1] == "--pacmaninstall":
             sb.run(["sudo","pacman", "-Syu", "--noconfirm"])
             sys.exit(0)
-        elif sys.argv[2] == "--aurinstall":
+        elif sys.argv[1] == "--aurinstall":
             print("Installing yay...")
             if sb.call("yay --version", shell=True) != 0:
                 sb.call(['git', 'clone', 'https://aur.archlinux.org/yay.git'])
@@ -130,7 +130,7 @@ if __name__ == "__main__":
                 sb.call(["yay", "-Syu", "--noconfirm"])
                 print("Yay already installed.")
             sys.exit(0)
-        elif sys.argv[2] == "--flatpakinstall":
+        elif sys.argv[1] == "--flatpakinstall":
             print("Installing flatpak...")
             if sb.call("yay --version", shell=True) != 0:
                 print("YAY not installed. Please install yay first.")
