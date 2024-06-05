@@ -48,10 +48,18 @@ if __name__ == "__main__":
     cwd = os.getcwd()
     ud_parse = cwd.split("/")
     if sys.argv[1] == "update":
-        sb.call(["git", "clone", "https://github.com/automatick/archpkg.git"])
-        sb.call(["sh", "./archpkg/archpkginstall"])
-        sb.call(["rm", "-rf", "archpkg"])
-        sys.exit(0)
+        if len(sys.argv) < 3:
+            sb.call(["git", "clone", "https://github.com/automatick/archpkg.git"])
+            sb.call(["sh", "./archpkg/archpkginstall"])
+            sb.call(["rm", "-rf", "archpkg"])
+            sys.exit(0)
+        else:
+            if sys.argv[2] == "aur":
+                sb.call(["yay", "-Syu", "--noconfirm"])
+            elif sys.argv[2] == "pacman":
+                sb.call(["sudo","pacman", "-Syu", "--noconfirm"])
+            elif sys.argv[2] == "flatpak":
+                sb.call(["flatpak", "update"])
     elif sys.argv[1] == "applist":
         sb.run("ls ~/Programs", shell=True)
         sys.exit(0)
