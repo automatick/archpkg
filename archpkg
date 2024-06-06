@@ -14,7 +14,7 @@ def dot_desktop_gen(name, exec, icon):
 [Desktop Entry]
 Name={}
 Exec='{}'
-Icon='{}'
+Icon={}
 Type=Application
 """.format(name, exec, icon)
 
