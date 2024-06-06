@@ -52,11 +52,8 @@ if __name__ == "__main__":
     ud_parse = cwd.split("/")
     if sys.argv[1] == "update":
         if len(sys.argv) < 3:
-            sb.call(["git", "clone", "https://github.com/automatick/archpkg.git"])
-            sb.call(["cd", "archpkg"])
-            sb.call(["sh", "./archpkginstall"])
-            sb.call(["cd", ".."])
-            sb.call(["rm", "-rf", "archpkg"])
+            sb.call("git", "clone", "https://github.com/automatick/archpkg.git")
+            sb.run("cd archpkg && sh makeupdate", shell=True)
             sys.exit(0)
         else:
             if sys.argv[2] == "aur":
