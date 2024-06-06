@@ -29,10 +29,9 @@ def get_folder_size(folder_path):
 
 
 def nfo_gen(name, desc, size):
-    return """
-    PkgName = {}
-    PkgDesc = {}
-    PkgSize = {}
+    return """PkgName = {}
+PkgDesc = {}
+PkgSize = {}
     """.format(name, desc, size)
 
 def nfo_read(nfo):
@@ -123,7 +122,7 @@ if __name__ == "__main__":
                     print(f"Found name in .desktop file: {name}")
                     dot_ds = dot_desktop_gen(name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{icon_name}")
                     sb.call(["mv", "squashfs-root", name])
-                    size = os.path.getsize(name)
+                    size = f"{(get_folder_size(name) / (1024 * 1024)): .2f} MB"
                     open(f"{name}/{ds_name}", 'w').write(dot_ds)
                     sb.call(["mv", f"{name}/{ds_name}", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{ds_name}"])
                     sb.call(["mv", name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}"])
@@ -147,9 +146,10 @@ if __name__ == "__main__":
         elif sys.argv[2] == "--flatpakrm":
             sb.call(["flatpak", "remove", sys.argv[3]])
         elif sys.argv[2] == "--apprm":
-            print(["rm", "-rf", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}"])
+            _, desc, _ = nfo_read(f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}.nfo")
             sb.call(["rm", "-rf", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}"])
-            sb.call(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{sys.argv[3].lower()}.desktop"])
+            sb.call(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}.nfo"])
+            sb.call(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{desc}"])
         sys.exit(0)
     if sys.argv[1] in pm_add_options:
         if sys.argv[1] == "--pacmaninstall":
