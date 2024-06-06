@@ -8,6 +8,7 @@ import sys
 init()
 pm_add_options = ["--pacmaninstall", "--aurinstall", "--flatpakinstall"]
 commands = ["install", "remove", "update", "applist", "help"] + pm_add_options
+archpkg_ver = "1.0.25"
 
 def dot_desktop_gen(name, exec, icon):
     return """
@@ -38,7 +39,8 @@ def print_help():
                     {}--aurrm{} - removes aur package
                     {}--flatpakrm{} - removes flatpak package
             default: aur install
-              """.format(Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL,Fore.YELLOW, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL))
+            version: {}
+              """.format(Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL,Fore.YELLOW, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.YELLOW, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, Fore.CYAN, Style.RESET_ALL, archpkg_ver))
     sys.exit(1)
 
 if __name__ == "__main__":
@@ -51,7 +53,9 @@ if __name__ == "__main__":
     if sys.argv[1] == "update":
         if len(sys.argv) < 3:
             sb.call(["git", "clone", "https://github.com/automatick/archpkg.git"])
-            sb.call(["sh", "./archpkg/archpkginstall"])
+            sb.call(["cd", "archpkg"])
+            sb.call(["sh", "./archpkginstall"])
+            sb.call(["cd", ".."])
             sb.call(["rm", "-rf", "archpkg"])
             sys.exit(0)
         else:
