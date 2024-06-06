@@ -19,6 +19,33 @@ Icon={}
 Type=Application
 """.format(name, exec, icon)
 
+def get_folder_size(folder_path):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(folder_path):
+        for filename in filenames:
+            file_path = os.path.join(dirpath, filename)
+            total_size += os.path.getsize(file_path)
+    return total_size
+
+
+def nfo_gen(name, desc, size):
+    return """
+    PkgName = {}
+    PkgDesc = {}
+    PkgSize = {}
+    """.format(name, desc, size)
+
+def nfo_read(nfo):
+    with open(nfo, 'r') as f:
+        for line in f:
+            if line.startswith('PkgName'):
+                name = line.split('=')[1].strip()
+            elif line.startswith('PkgDesc'):
+                desc = line.split('=')[1].strip()
+            elif line.startswith('PkgSize'):
+                size = line.split('=')[1].strip()
+        return name, desc, size
+
 def print_help():
     print(Fore.RED + """Usage: archpkg <command> [options]
               {}update{} [{}aur{}|{}pacman{}|{}flatpak{}] - updates the archpkg
@@ -68,7 +95,10 @@ if __name__ == "__main__":
             print_help()
             sys.exit(0)    
     elif sys.argv[1] == "applist":
-        sb.run("ls ~/Programs", shell=True)
+        for i in os.listdir(f"/{ud_parse[1]}/{ud_parse[2]}/Programs"):
+            if i.endswith(".nfo"):
+                name, desc, size = nfo_read(f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{i}")
+                print(f"{Fore.CYAN}{name}{Style.RESET_ALL}: {Fore.YELLOW}{size}{Style.RESET_ALL}")
         sys.exit(0)
     elif sys.argv[1] == "install":
             if sys.argv[2] == "--appimage":
@@ -88,17 +118,18 @@ if __name__ == "__main__":
                 if not name:
                     print("Could not find name in .desktop file")
                     sb.run("ls", shell=True)
-                    pkg_name = input("Enter the package name manualy: ")
-                    sb.call(["mv", "squashfs-root", pkg_name])
-                    dot_ds = dot_desktop_gen(pkg_name, f"~/Programs/{pkg_name}/AppRun", f"~/Programs/{pkg_name}/{pkg_name}.png")
-                else:
+                    name = input("Enter the package name manualy: ")
+                if name:
                     print(f"Found name in .desktop file: {name}")
                     dot_ds = dot_desktop_gen(name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{icon_name}")
                     sb.call(["mv", "squashfs-root", name])
+                    size = os.path.getsize(name)
                     open(f"{name}/{ds_name}", 'w').write(dot_ds)
                     sb.call(["mv", f"{name}/{ds_name}", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{ds_name}"])
                     sb.call(["mv", name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}"])
                     sb.call(["chmod", "+x", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun"])
+                    with open(f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}.nfo", 'w') as f:
+                        f.write(nfo_gen(name, ds_name, size))
                     sys.exit(0)
             elif sys.argv[2] == "--aur":
                 sb.call(["yay", "-S", sys.argv[3], "--noconfirm"])
