@@ -116,9 +116,7 @@ if __name__ == "__main__":
         elif sys.argv[2] == "--flatpakrm":
             sb.call(["flatpak", "remove", sys.argv[3]])
         elif sys.argv[2] == "--apprm":
-            print(["rm", "-rf", f"{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}"])
-            sb.call(["rm", "-rf", f"{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}"])
-            print(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{sys.argv[3].lower()}.desktop"])
+            sb.call(["rm", "-rf", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}"])
             sb.call(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{sys.argv[3].lower()}.desktop"])
         sys.exit(0)
     if sys.argv[1] in pm_add_options:
