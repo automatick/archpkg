@@ -8,7 +8,7 @@ import sys
 init()
 pm_add_options = ["--pacmaninstall", "--aurinstall", "--flatpakinstall"]
 commands = ["install", "remove", "update", "applist", "help"] + pm_add_options
-archpkg_ver = "1.0.30"
+archpkg_ver = "1.0.35"
 
 def dot_desktop_gen(name, exec, icon):
     return """
