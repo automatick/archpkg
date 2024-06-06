@@ -39,12 +39,12 @@ def nfo_read(nfo):
     with open(nfo, 'r') as f:
         for line in f:
             if line.startswith('PkgName'):
-                name = line.split('=')[1].strip()
+                nme = line.split('=')[1].strip()
             elif line.startswith('PkgDesc'):
                 desc = line.split('=')[1].strip()
             elif line.startswith('PkgSize'):
                 size = line.split('=')[1].strip()
-        return name, desc, size
+        return nme, desc, size
 
 def print_help():
     print(Fore.RED + """Usage: archpkg <command> [options]
