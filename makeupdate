@@ -1,6 +1,0 @@
-#!/bin/bash
-git clone https://github.com/automatick/archpkg.git
-cd archpkg
-sh archpkginstall
-cd ..
-rm -rf archpkg
