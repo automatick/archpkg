@@ -102,8 +102,8 @@ if __name__ == "__main__":
         sys.exit(0)
     elif sys.argv[1] == "install":
             if sys.argv[2] == "--appimage":
-                sb.call(["chmod", "+x", sys.argv[3]])
-                sb.call([f"{cwd}/{sys.argv[3]}", "--appimage-extract"])
+                sb.call(["chmod", "+x", sys.argv[3]], stdout=open(os.devnull, 'w'), stderr=sb.STDOUT)
+                sb.call([f"{cwd}/{sys.argv[3]}", "--appimage-extract"], stdout=open(os.devnull, 'w'), stderr=sb.STDOUT)
                 sb.call(["chmod", "+x", "squashfs-root/AppRun"], stdout=open(os.devnull, 'w'), stderr=sb.STDOUT)
                 name = False
                 for i in os.listdir("squashfs-root"):
@@ -120,7 +120,7 @@ if __name__ == "__main__":
                     sb.run("ls", shell=True)
                     name = input("Enter the package name manualy: ")
                 if name:
-                    print(f"Found name in .desktop file: {name}")
+                    print(f"{Fore.GREEN}Found name in .desktop file: {Fore.CYAN}{name}{Style.RESET_ALL}")
                     dot_ds = dot_desktop_gen(name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{icon_name}")
                     sb.call(["mv", "squashfs-root", name])
                     size = f"{(get_folder_size(name) / (1024 * 1024)): .2f} MB"
@@ -130,7 +130,7 @@ if __name__ == "__main__":
                     sb.call(["chmod", "+x", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun"])
                     with open(f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}.nfo", 'w') as f:
                         f.write(nfo_gen(name, ds_name, size))
-                    print(f"{Fore.GREEN}Installed {Fore.CYAN}{name}{Fore.YELLOW} with size: {Fore.CYAN}{size}{Fore.YELLOW} at path: /{ud_parse[1]}/{ud_parse[2]}/Programs/{name}")
+                    print(f"{Fore.GREEN}Installed '{Fore.CYAN}{name}{Fore.YELLOW}', with size: {Fore.CYAN}{size}{Fore.YELLOW}, at path: {Fore.CYAN}'/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}'{Fore.YELLOW}.")
                     sys.exit(0)
             elif sys.argv[2] == "--aur":
                 sb.call(["yay", "-S", sys.argv[3], "--noconfirm"])
