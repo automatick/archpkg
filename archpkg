@@ -3,6 +3,7 @@ import subprocess as sb
 import os
 from colorama import Fore, Style, init
 import sys
+import time
 
 # Initialize colorama
 init()
@@ -76,6 +77,7 @@ if __name__ == "__main__":
         print_help()
     cwd = os.getcwd()
     ud_parse = cwd.split("/")
+    time_bef = time.time()
     if sys.argv[1] == "update":
         if len(sys.argv) < 3:
             sb.call(["git", "clone", "https://github.com/automatick/archpkg.git"])
@@ -131,28 +133,37 @@ if __name__ == "__main__":
                     with open(f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}.nfo", 'w') as f:
                         f.write(nfo_gen(name, ds_name, size))
                     print(f"{Fore.GREEN}Installed '{Fore.CYAN}{name}{Fore.YELLOW}': \n\tSize: {Fore.CYAN}{size}{Fore.YELLOW} \n\tPath: {Fore.CYAN}'/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}'{Fore.YELLOW}\n\tIcon: {Fore.CYAN}'/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{icon_name}'{Fore.YELLOW}\n\tDesk: {Fore.CYAN}'/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{ds_name}'{Fore.YELLOW}")
+                    print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
                     sys.exit(0)
             elif sys.argv[2] == "--aur":
                 sb.call(["yay", "-S", sys.argv[3], "--noconfirm"])
+                print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
             elif sys.argv[2] == "--pacman":
                 sb.call(["sudo","pacman", "-S", sys.argv[3], "--noconfirm"])
+                print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
             elif sys.argv[2] == "--flatpak":
                 sb.call(["flatpak", "install", sys.argv[3]])
+                print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
             else:
                 sb.call(["yay", "-S", sys.argv[2], "--noconfirm"])
+                print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
     elif sys.argv[1] == "remove":
         if sys.argv[2] == "--pacrm":
             sb.call(["pacman", "-Rsn", sys.argv[3]])
+            print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
         elif sys.argv[2] == "--aurrm":
             sb.call(["yay", "-Rsn", sys.argv[3]])
+            print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
         elif sys.argv[2] == "--flatpakrm":
             sb.call(["flatpak", "remove", sys.argv[3]])
+            print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
         elif sys.argv[2] == "--apprm":
             _, desc, _ = nfo_read(f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}.nfo")
             sb.call(["rm", "-rf", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}"])
             sb.call(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{sys.argv[3]}.nfo"])
             sb.call(["rm", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{desc}"])
             print(f"{Fore.YELLOW}Application '{Fore.CYAN}{sys.argv[3]}{Fore.YELLOW}' removed.{Style.RESET_ALL}")
+            print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
         sys.exit(0)
     if sys.argv[1] in pm_add_options:
         if sys.argv[1] == "--pacmaninstall":
