@@ -97,7 +97,8 @@ if __name__ == "__main__":
         for i in os.listdir(f"/{ud_parse[1]}/{ud_parse[2]}/Programs"):
             if i.endswith(".nfo"):
                 name, desc, size = nfo_read(f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{i}")
-                print(f"{Fore.CYAN}{name}{Style.RESET_ALL}: {Fore.YELLOW}{size}{Style.RESET_ALL}")
+                idk = f"{Fore.CYAN}{name}{Style.RESET_ALL}: "
+                print(idk + (" " * (20 - len(idk)) + f"{Fore.YELLOW}{size}{Style.RESET_ALL}MB"))
         sys.exit(0)
     elif sys.argv[1] == "install":
             if sys.argv[2] == "--appimage":
