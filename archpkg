@@ -130,7 +130,7 @@ if __name__ == "__main__":
                     sb.call(["chmod", "+x", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun"])
                     with open(f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}.nfo", 'w') as f:
                         f.write(nfo_gen(name, ds_name, size))
-                    print(f"{Fore.GREEN}Installed '{Fore.CYAN}{name}{Fore.YELLOW}' \n\tSize: {Fore.CYAN}{size}{Fore.YELLOW} \n\tPath: {Fore.CYAN}'/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}'{Fore.YELLOW}\n\tIcon: {Fore.CYAN}'/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{icon_name}'{Fore.YELLOW}")
+                    print(f"{Fore.GREEN}Installed '{Fore.CYAN}{name}{Fore.YELLOW}': \n\tSize: {Fore.CYAN}{size}{Fore.YELLOW} \n\tPath: {Fore.CYAN}'/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}'{Fore.YELLOW}\n\tIcon: {Fore.CYAN}'/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/{icon_name}'{Fore.YELLOW}\n\t.desktop: {Fore.CYAN}'/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{ds_name}'{Fore.YELLOW}")
                     sys.exit(0)
             elif sys.argv[2] == "--aur":
                 sb.call(["yay", "-S", sys.argv[3], "--noconfirm"])
