@@ -147,6 +147,7 @@ if __name__ == "__main__":
             else:
                 sb.call(["yay", "-S", sys.argv[2], "--noconfirm"])
                 print(f"{Fore.LIGHTMAGENTA_EX}Time taken: {Fore.CYAN}{time.time() - time_bef:.2f}{Fore.LIGHTMAGENTA_EX} seconds")
+            sys.exit(0)
     elif sys.argv[1] == "remove":
         if sys.argv[2] == "--pacrm":
             sb.call(["pacman", "-Rsn", sys.argv[3]])
