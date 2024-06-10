@@ -127,7 +127,7 @@ if __name__ == "__main__":
                     sb.call(["mv", "squashfs-root", name])
                     size = f"{(get_folder_size(name) / (1024 * 1024)): .2f} MB"
                     open(f"{name}/{ds_name}", 'w').write(dot_ds)
-                    sb.call(["mv", f"{name}/{ds_name}", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{ds_name}"])
+                    sb.call(["cp", f"{name}/{ds_name}", f"/{ud_parse[1]}/{ud_parse[2]}/.local/share/applications/{ds_name}"])
                     sb.call(["mv", name, f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}"])
                     sb.call(["chmod", "+x", f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}/AppRun"])
                     with open(f"/{ud_parse[1]}/{ud_parse[2]}/Programs/{name}.nfo", 'w') as f:
